@@ -1,0 +1,71 @@
+require('dotenv').config();
+const express = require('express');
+const { google } = require('googleapis');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+
+const app = express();
+app.use(cors());
+app.use(bodyParser.json());
+
+const auth = new google.auth.GoogleAuth({
+  keyFile: 'credentials.json',
+  scopes: ['https://www.googleapis.com/auth/spreadsheets']
+});
+
+app.post('/api/write-result', async (req, res) => {
+  const { name, result, timestamp } = req.body;
+  if (!name || !result || !timestamp) return res.status(400).send('Missing data');
+
+  try {
+    const client = await auth.getClient();
+    const sheets = google.sheets({ version: 'v4', auth: client });
+    const sheetId = process.env.SHEET_ID;
+
+    // シート1の更新
+    const readRes = await sheets.spreadsheets.values.get({
+      spreadsheetId: sheetId,
+      range: 'シート1!A2:A'
+    });
+
+    const rows = readRes.data.values;
+    const rowIndex = rows.findIndex(row => row[0] === name);
+    if (rowIndex === -1) return res.status(404).send('Name not found');
+
+    const updateRow = rowIndex + 2;
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: sheetId,
+      range: `シート1!C${updateRow}:D${updateRow}`,
+      valueInputOption: 'RAW',
+      requestBody: {
+        values: [[result, timestamp]]
+      }
+    });
+
+    // ログシートへの追記
+    const phoneRes = await sheets.spreadsheets.values.get({
+      spreadsheetId: sheetId,
+      range: `シート1!B${updateRow}`
+    });
+    const phone = phoneRes.data.values?.[0]?.[0] || '';
+
+    await sheets.spreadsheets.values.append({
+      spreadsheetId: sheetId,
+      range: 'ログ!A:D',
+      valueInputOption: 'RAW',
+      insertDataOption: 'INSERT_ROWS',
+      requestBody: {
+        values: [[name, phone, result, timestamp]]
+      }
+    });
+
+    res.send('書き込み成功');
+  } catch (err) {
+    console.error('❌ Google Sheets 書き込みエラー:', err.message);
+    res.status(500).send('書き込み失敗');
+  }
+});
+
+app.listen(3000, () => {
+  console.log('✅ Server started on http://localhost:3000');
+});

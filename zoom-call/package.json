@@ -1,0 +1,42 @@
+{
+  "name": "zoom-caller",
+  "version": "1.0.0",
+  "description": "NI-call.system",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "npx concurrently \"node server.js\" \"npx http-server .\"",
+    "dist": "electron-builder"
+  },
+  "build": {
+    "appId": "com.example.ni-call",
+    "productName": "NI-call.system",
+    "asarUnpack": [
+      "server.js",
+      "single.html",
+      "credentials.json"
+    ],
+    "files": [
+      "**/*",
+      "!node_modules/**/*dev",
+      "!dist"
+    ],
+    "mac": {
+      "target": ["dmg", "zip"],
+      "icon": "assets/icon.icns"
+    }
+  },
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "googleapis": "^148.0.0"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0",
+    "electron": "^29.0.0",
+    "electron-builder": "^24.13.2",
+    "http-server": "^14.1.1"
+  }
+}
