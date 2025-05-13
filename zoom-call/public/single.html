@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zoom Call System</title>
+  <script defer src="/scripts/login.js"></script>
+  <script defer src="/scripts/sheet.js"></script>
+  <script defer src="/scripts/fetch-call-logs.js"></script>
+  <script defer src="/scripts/pdf-viewer.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 p-4">
+  <div id="app" class="max-w-3xl mx-auto bg-white rounded shadow p-6">
+    <h1 class="text-xl font-bold mb-4">📞 Zoom Call System</h1>
+
+    <!-- Login -->
+    <div id="login-section" class="mb-4">
+      <label class="block mb-2">ログインID</label>
+      <input id="login-id" class="border p-2 w-full mb-2" placeholder="NI" />
+      <label class="block mb-2">パスワード</label>
+      <input id="login-password" type="password" class="border p-2 w-full mb-2" placeholder="newisland2022" />
+      <div class="mb-2">
+        <label><input type="checkbox" id="remember-login" /> 自動ログインを有効にする</label>
+      </div>
+      <button onclick="login()" class="bg-blue-500 text-white px-4 py-2 rounded">ログイン</button>
+    </div>
+
+    <!-- Main UI -->
+    <div id="main-ui" class="hidden">
+      <div class="mb-4">
+        <label>スプレッドシート名</label>
+        <select id="sheet-selector" class="border p-2 w-full mb-2">
+          <option value="menuリスト">menuリスト</option>
+          <option value="csリスト">csリスト</option>
+          <option value="test">test</option>
+        </select>
+      </div>
+
+      <div class="mb-4">
+        <label>企業名</label>
+        <input id="name" class="border p-2 w-full mb-2" placeholder="企業名" />
+        <label>電話番号</label>
+        <input id="phone" class="border p-2 w-full mb-2" placeholder="電話番号" />
+      </div>
+
+      <div class="mb-4">
+        <label>通話結果</label>
+        <select id="result" class="border p-2 w-full mb-2">
+          <option value="成功">成功</option>
+          <option value="NG">NG</option>
+          <option value="留守">留守</option>
+          <option value="担当不在">担当不在</option>
+        </select>
+        <label>担当者</label>
+        <input id="receiver" class="border p-2 w-full mb-2" placeholder="担当者名" />
+        <label>メモ</label>
+        <textarea id="memo" class="border p-2 w-full mb-2" placeholder="メモを記入..."></textarea>
+        <button onclick="saveAndNext()" class="bg-green-500 text-white px-4 py-2 rounded">保存して次へ</button>
+      </div>
+
+      <div class="mb-4">
+        <button onclick="loadLogs()" class="bg-yellow-500 text-white px-4 py-2 rounded">📜 ログ表示</button>
+        <button onclick="loadAllLogs()" class="bg-gray-700 text-white px-4 py-2 rounded">📖 全ログ表示</button>
+      </div>
+
+      <div class="mb-4">
+        <label>📚 マニュアル表示</label>
+        <select id="manual-selector" class="border p-2 w-full mb-2" onchange="showManual()">
+          <option value="">選択してください</option>
+          <option value="script1.pdf">台本1</option>
+          <option value="qna.docx">Q&A</option>
+        </select>
+        <iframe id="manual-frame" class="w-full h-64 border" style="display:none;"></iframe>
+      </div>
+
+      <div id="log-display" class="text-sm text-gray-800"></div>
+    </div>
+  </div>
+</body>
+</html>

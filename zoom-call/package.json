@@ -1,0 +1,23 @@
+{
+  "name": "zoom-call",
+  "version": "1.0.0",
+  "description": "Zoom電話管理システム（Web版）",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'No build step required'",
+    "start": "vercel dev"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "googleapis": "^148.0.0"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=18.x"
+  },
+  "keywords": [],
+  "author": "New Island",
+  "license": "MIT"
+}
